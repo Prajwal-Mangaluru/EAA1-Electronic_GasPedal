@@ -1,0 +1,17 @@
+# Lab1_GasPedal
+# 2025-05-21 17:10:58Z
+
+# IO_0@[IOP=(1)][IoId=(0)] is reserved: SWDDebugEnabled
+dont_use_io iocell 1 0
+# IO_1@[IOP=(1)][IoId=(1)] is reserved: SWDDebugEnabled
+dont_use_io iocell 1 1
+# IO_3@[IOP=(1)][IoId=(3)] is reserved: SWDDebugEnabled
+dont_use_io iocell 1 3
+set_io "JOYSTICK_X(0)" iocell 0 0
+set_io "JOYSTICK_Y(0)" iocell 0 1
+set_io "Engine_LED(0)" iocell 2 4
+set_io "Brake_LED(0)" iocell 0 6
+set_io "UART_Rx_LOG(0)" iocell 12 6
+set_io "UART_Tx_LOG(0)" iocell 12 7
+set_io "WD_Button(0)" iocell 0 3
+set_location "\JOYSTICK_ADC:SAR:ADC_SAR\" sarcell -1 -1 0

@@ -1,0 +1,6 @@
+C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\psoc\content\default\CyAnnotationLibrary\CyAnnotationLibrary.cylib\CyAnnotationLibrary.cyprj|8ccabd71-d62e-4082-8875-858e3ae0dd29
+C:\Users\Vikram Vadhirajan\OneDrive\Documents\PSoC Creator\4.4\Downloads ( 4.4).cylib\Downloads ( 4.4).cyprj|e8ac805b-1ea3-4c64-82fb-d7d16021b92f
+C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\psoc\content\cycomponentlibraryupdates\CyComponentLibraryUpdates.cylib\CyComponentLibraryUpdates.cyprj|879b1dc0-b69d-4a78-80ad-79ff51e507ad
+C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CyComponentLibrary.cyprj|574ae7a6-3913-4737-80af-a8c5d03e35a3
+C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\psoc\content\cyprimitives\CyPrimitives.cylib\CyPrimitives.cyprj|512e3464-c1b8-4a7f-a9c8-3fc45085e644
+C:\Users\Vikram Vadhirajan\OneDrive - LearnMSO\Praju_Docs\Semester_2\EAA\Lab\PSOC_Creator\Lab\Lab1\Lab1_Assignment_GasPedal\Lab1_GasPedal.cydsn\Lab1_GasPedal.cyprj|031c6806-2ed5-4d63-a015-15ec5ecfb25c

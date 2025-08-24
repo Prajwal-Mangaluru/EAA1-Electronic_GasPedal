@@ -1,0 +1,1457 @@
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"watchdog_timer.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.WD_Start,"ax",%progbits
+  20              		.align	2
+  21              		.global	WD_Start
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	WD_Start, %function
+  25              	WD_Start:
+  26              	.LFB111:
+  27              		.file 1 "watchdog_timer.c"
+   1:watchdog_timer.c **** /* ========================================
+   2:watchdog_timer.c ****  *
+   3:watchdog_timer.c ****  * Copyright YOUR COMPANY, THE YEAR
+   4:watchdog_timer.c ****  * All Rights Reserved
+   5:watchdog_timer.c ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:watchdog_timer.c ****  *
+   7:watchdog_timer.c ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:watchdog_timer.c ****  * WHICH IS THE PROPERTY OF your company.
+   9:watchdog_timer.c ****  *
+  10:watchdog_timer.c ****  * ========================================
+  11:watchdog_timer.c **** */
+  12:watchdog_timer.c **** 
+  13:watchdog_timer.c **** /* [] END OF FILE */
+  14:watchdog_timer.c **** 
+  15:watchdog_timer.c **** # include "watchdog_timer.h"
+  16:watchdog_timer.c **** # include "stdio.h"
+  17:watchdog_timer.c **** static volatile uint32_t wd_aliveBits = 0;
+  18:watchdog_timer.c **** #define WD_EXPECTED_ALIVE_MASK 0xF  // e.g., 0b00001111 => 4 runnables
+  19:watchdog_timer.c **** /**
+  20:watchdog_timer.c **** * Activate the Watchdog Trigger
+  21:watchdog_timer.c **** * \param WDT_TimeOut_t timeout - [IN] Timeout Period
+  22:watchdog_timer.c **** * @return RC_SUCCESS
+  23:watchdog_timer.c **** */
+  24:watchdog_timer.c **** RC_t WD_Start(WDT_TimeOut_t timeout)
+  25:watchdog_timer.c **** {
+  28              		.loc 1 25 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 2
+
+
+  33 0000 08B5     		push	{r3, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 3, -8
+  36              		.cfi_offset 14, -4
+  26:watchdog_timer.c ****     CyWdtStart(timeout,CYWDT_LPMODE_NOCHANGE);
+  37              		.loc 1 26 0
+  38 0002 0021     		movs	r1, #0
+  39 0004 FFF7FEFF 		bl	CyWdtStart
+  40              	.LVL1:
+  27:watchdog_timer.c ****     return RC_SUCCESS;   
+  28:watchdog_timer.c **** }
+  41              		.loc 1 28 0
+  42 0008 0020     		movs	r0, #0
+  43 000a 08BD     		pop	{r3, pc}
+  44              		.cfi_endproc
+  45              	.LFE111:
+  46              		.size	WD_Start, .-WD_Start
+  47              		.section	.text.WD_Trigger,"ax",%progbits
+  48              		.align	2
+  49              		.global	WD_Trigger
+  50              		.thumb
+  51              		.thumb_func
+  52              		.type	WD_Trigger, %function
+  53              	WD_Trigger:
+  54              	.LFB112:
+  29:watchdog_timer.c **** 
+  30:watchdog_timer.c **** /**
+  31:watchdog_timer.c **** * Service the Watchdog Trigger
+  32:watchdog_timer.c **** * @return RC_SUCCESS
+  33:watchdog_timer.c **** */
+  34:watchdog_timer.c **** RC_t WD_Trigger()
+  35:watchdog_timer.c **** {
+  55              		.loc 1 35 0
+  56              		.cfi_startproc
+  57              		@ args = 0, pretend = 0, frame = 0
+  58              		@ frame_needed = 0, uses_anonymous_args = 0
+  59 0000 08B5     		push	{r3, lr}
+  60              		.cfi_def_cfa_offset 8
+  61              		.cfi_offset 3, -8
+  62              		.cfi_offset 14, -4
+  36:watchdog_timer.c ****     if((wd_aliveBits & WD_EXPECTED_ALIVE_MASK)==0xF)
+  63              		.loc 1 36 0
+  64 0002 064B     		ldr	r3, .L6
+  65 0004 1B68     		ldr	r3, [r3]
+  66 0006 03F00F03 		and	r3, r3, #15
+  67 000a 0F2B     		cmp	r3, #15
+  68 000c 04D1     		bne	.L4
+  37:watchdog_timer.c ****     {
+  38:watchdog_timer.c ****         CyWdtClear();
+  69              		.loc 1 38 0
+  70 000e FFF7FEFF 		bl	CyWdtClear
+  71              	.LVL2:
+  39:watchdog_timer.c ****         wd_aliveBits=0;
+  72              		.loc 1 39 0
+  73 0012 0022     		movs	r2, #0
+  74 0014 014B     		ldr	r3, .L6
+  75 0016 1A60     		str	r2, [r3]
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 3
+
+
+  76              	.L4:
+  40:watchdog_timer.c ****         //UART_LOG_PutString("Watchdog is Feed and Alive..... Resetting bits\r\n");
+  41:watchdog_timer.c ****     }
+  42:watchdog_timer.c ****     return RC_SUCCESS;
+  43:watchdog_timer.c **** }
+  77              		.loc 1 43 0
+  78 0018 0020     		movs	r0, #0
+  79 001a 08BD     		pop	{r3, pc}
+  80              	.L7:
+  81              		.align	2
+  82              	.L6:
+  83 001c 00000000 		.word	.LANCHOR0
+  84              		.cfi_endproc
+  85              	.LFE112:
+  86              		.size	WD_Trigger, .-WD_Trigger
+  87              		.section	.text.WD_CheckResetBit,"ax",%progbits
+  88              		.align	2
+  89              		.global	WD_CheckResetBit
+  90              		.thumb
+  91              		.thumb_func
+  92              		.type	WD_CheckResetBit, %function
+  93              	WD_CheckResetBit:
+  94              	.LFB113:
+  44:watchdog_timer.c **** 
+  45:watchdog_timer.c **** /**
+  46:watchdog_timer.c **** * Checks the watchdog bit
+  47:watchdog_timer.c **** * @return TRUE if watchdog reset bit was set
+  48:watchdog_timer.c **** */
+  49:watchdog_timer.c **** boolean_t WD_CheckResetBit()
+  50:watchdog_timer.c **** {
+  95              		.loc 1 50 0
+  96              		.cfi_startproc
+  97              		@ args = 0, pretend = 0, frame = 0
+  98              		@ frame_needed = 0, uses_anonymous_args = 0
+  99              		@ link register save eliminated.
+  51:watchdog_timer.c ****     if(CyResetStatus & CY_RESET_WD)
+ 100              		.loc 1 51 0
+ 101 0000 044B     		ldr	r3, .L10
+ 102 0002 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 103 0004 03F00803 		and	r3, r3, #8
+ 104 0008 03F0FF00 		and	r0, r3, #255
+ 105 000c 03B1     		cbz	r3, .L9
+  52:watchdog_timer.c ****         return TRUE;
+ 106              		.loc 1 52 0
+ 107 000e 0120     		movs	r0, #1
+ 108              	.L9:
+  53:watchdog_timer.c ****     else
+  54:watchdog_timer.c ****         return FALSE;
+  55:watchdog_timer.c **** }
+ 109              		.loc 1 55 0
+ 110 0010 7047     		bx	lr
+ 111              	.L11:
+ 112 0012 00BF     		.align	2
+ 113              	.L10:
+ 114 0014 00000000 		.word	CyResetStatus
+ 115              		.cfi_endproc
+ 116              	.LFE113:
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 4
+
+
+ 117              		.size	WD_CheckResetBit, .-WD_CheckResetBit
+ 118              		.section	.text.WD_Alive,"ax",%progbits
+ 119              		.align	2
+ 120              		.global	WD_Alive
+ 121              		.thumb
+ 122              		.thumb_func
+ 123              		.type	WD_Alive, %function
+ 124              	WD_Alive:
+ 125              	.LFB114:
+  56:watchdog_timer.c **** 
+  57:watchdog_timer.c **** /**
+  58:watchdog_timer.c **** * Checks the watchdog Alive state
+  59:watchdog_timer.c **** * @return RC_SUCCESS
+  60:watchdog_timer.c **** **/
+  61:watchdog_timer.c **** /*
+  62:watchdog_timer.c ****     Let say joystick runnable sends alive bit i.e. myBitPosition = 0
+  63:watchdog_timer.c ****     Initial value of WD_RunnableAliveBitField = 0000 0000
+  64:watchdog_timer.c ****     left shift 1U by 0 i.e. 0000 0001 <<0 ==> 0000 0001
+  65:watchdog_timer.c ****     Bitwise OR between (1U << myBitPositon) and WD_RunnableAliveBitField ==> 0000 0001
+  66:watchdog_timer.c ****     so for second runnable ==> 0000 0011
+  67:watchdog_timer.c ****     Third runnable ==> 0000 0111
+  68:watchdog_timer.c ****     Fourth runnable ==> 0000 1111
+  69:watchdog_timer.c **** */
+  70:watchdog_timer.c **** RC_t WD_Alive(uint8_t myBitPosition)
+  71:watchdog_timer.c **** {
+ 126              		.loc 1 71 0
+ 127              		.cfi_startproc
+ 128              		@ args = 0, pretend = 0, frame = 0
+ 129              		@ frame_needed = 0, uses_anonymous_args = 0
+ 130              		@ link register save eliminated.
+ 131              	.LVL3:
+  72:watchdog_timer.c ****     wd_aliveBits |= (1UL << myBitPosition);
+ 132              		.loc 1 72 0
+ 133 0000 0123     		movs	r3, #1
+ 134 0002 03FA00F0 		lsl	r0, r3, r0
+ 135              	.LVL4:
+ 136 0006 034A     		ldr	r2, .L13
+ 137 0008 1368     		ldr	r3, [r2]
+ 138 000a 1843     		orrs	r0, r0, r3
+ 139 000c 1060     		str	r0, [r2]
+  73:watchdog_timer.c ****     return RC_SUCCESS;
+  74:watchdog_timer.c **** }...
+ 140              		.loc 1 74 0
+ 141 000e 0020     		movs	r0, #0
+ 142 0010 7047     		bx	lr
+ 143              	.L14:
+ 144 0012 00BF     		.align	2
+ 145              	.L13:
+ 146 0014 00000000 		.word	.LANCHOR0
+ 147              		.cfi_endproc
+ 148              	.LFE114:
+ 149              		.size	WD_Alive, .-WD_Alive
+ 150              		.bss
+ 151              		.align	2
+ 152              		.set	.LANCHOR0,. + 0
+ 153              		.type	wd_aliveBits, %object
+ 154              		.size	wd_aliveBits, 4
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 5
+
+
+ 155              	wd_aliveBits:
+ 156 0000 00000000 		.space	4
+ 157              		.text
+ 158              	.Letext0:
+ 159              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 160              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 161              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 162              		.file 5 "Generated_Source\\PSoC5/ErikaOS_1_common_ee_types.inc"
+ 163              		.file 6 "Generated_Source\\PSoC5/ErikaOS_1_cortex_mx_ee_cpu.inc"
+ 164              		.file 7 ".\\source\\bsw/global.h"
+ 165              		.file 8 "watchdog_timer.h"
+ 166              		.file 9 "Generated_Source\\PSoC5/ErikaOS_1_ee_oo_intfunc.inc"
+ 167              		.file 10 "Generated_Source\\PSoC5/ErikaOS_1_cortex_mx_ee_context.inc"
+ 168              		.file 11 "Generated_Source\\PSoC5/ErikaOS_1_common_ee_primitives.inc"
+ 169              		.file 12 "Generated_Source\\PSoC5/CyLib.h"
+ 170              		.file 13 "Generated_Source\\PSoC5/core_cm3.h"
+ 171              		.section	.debug_info,"",%progbits
+ 172              	.Ldebug_info0:
+ 173 0000 17030000 		.4byte	0x317
+ 174 0004 0400     		.2byte	0x4
+ 175 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 176 000a 04       		.byte	0x4
+ 177 000b 01       		.uleb128 0x1
+ 178 000c F5020000 		.4byte	.LASF72
+ 179 0010 0C       		.byte	0xc
+ 180 0011 00000000 		.4byte	.LASF73
+ 181 0015 E5030000 		.4byte	.LASF74
+ 182 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 183 001d 00000000 		.4byte	0
+ 184 0021 00000000 		.4byte	.Ldebug_line0
+ 185 0025 02       		.uleb128 0x2
+ 186 0026 01       		.byte	0x1
+ 187 0027 06       		.byte	0x6
+ 188 0028 60020000 		.4byte	.LASF0
+ 189 002c 03       		.uleb128 0x3
+ 190 002d E0010000 		.4byte	.LASF4
+ 191 0031 02       		.byte	0x2
+ 192 0032 1D       		.byte	0x1d
+ 193 0033 37000000 		.4byte	0x37
+ 194 0037 02       		.uleb128 0x2
+ 195 0038 01       		.byte	0x1
+ 196 0039 08       		.byte	0x8
+ 197 003a 43020000 		.4byte	.LASF1
+ 198 003e 02       		.uleb128 0x2
+ 199 003f 02       		.byte	0x2
+ 200 0040 05       		.byte	0x5
+ 201 0041 49000000 		.4byte	.LASF2
+ 202 0045 02       		.uleb128 0x2
+ 203 0046 02       		.byte	0x2
+ 204 0047 07       		.byte	0x7
+ 205 0048 E2020000 		.4byte	.LASF3
+ 206 004c 03       		.uleb128 0x3
+ 207 004d C8040000 		.4byte	.LASF5
+ 208 0051 02       		.byte	0x2
+ 209 0052 3F       		.byte	0x3f
+ 210 0053 57000000 		.4byte	0x57
+ 211 0057 02       		.uleb128 0x2
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 6
+
+
+ 212 0058 04       		.byte	0x4
+ 213 0059 05       		.byte	0x5
+ 214 005a B7010000 		.4byte	.LASF6
+ 215 005e 03       		.uleb128 0x3
+ 216 005f B2000000 		.4byte	.LASF7
+ 217 0063 02       		.byte	0x2
+ 218 0064 41       		.byte	0x41
+ 219 0065 69000000 		.4byte	0x69
+ 220 0069 02       		.uleb128 0x2
+ 221 006a 04       		.byte	0x4
+ 222 006b 07       		.byte	0x7
+ 223 006c 88040000 		.4byte	.LASF8
+ 224 0070 02       		.uleb128 0x2
+ 225 0071 08       		.byte	0x8
+ 226 0072 05       		.byte	0x5
+ 227 0073 6C010000 		.4byte	.LASF9
+ 228 0077 02       		.uleb128 0x2
+ 229 0078 08       		.byte	0x8
+ 230 0079 07       		.byte	0x7
+ 231 007a 6C020000 		.4byte	.LASF10
+ 232 007e 04       		.uleb128 0x4
+ 233 007f 04       		.byte	0x4
+ 234 0080 05       		.byte	0x5
+ 235 0081 696E7400 		.ascii	"int\000"
+ 236 0085 02       		.uleb128 0x2
+ 237 0086 04       		.byte	0x4
+ 238 0087 07       		.byte	0x7
+ 239 0088 8C020000 		.4byte	.LASF11
+ 240 008c 03       		.uleb128 0x3
+ 241 008d CE000000 		.4byte	.LASF12
+ 242 0091 03       		.byte	0x3
+ 243 0092 18       		.byte	0x18
+ 244 0093 2C000000 		.4byte	0x2c
+ 245 0097 03       		.uleb128 0x3
+ 246 0098 9D030000 		.4byte	.LASF13
+ 247 009c 03       		.byte	0x3
+ 248 009d 2C       		.byte	0x2c
+ 249 009e 4C000000 		.4byte	0x4c
+ 250 00a2 03       		.uleb128 0x3
+ 251 00a3 83020000 		.4byte	.LASF14
+ 252 00a7 03       		.byte	0x3
+ 253 00a8 30       		.byte	0x30
+ 254 00a9 5E000000 		.4byte	0x5e
+ 255 00ad 05       		.uleb128 0x5
+ 256 00ae FE000000 		.4byte	.LASF15
+ 257 00b2 04       		.byte	0x4
+ 258 00b3 E901     		.2byte	0x1e9
+ 259 00b5 37000000 		.4byte	0x37
+ 260 00b9 02       		.uleb128 0x2
+ 261 00ba 04       		.byte	0x4
+ 262 00bb 04       		.byte	0x4
+ 263 00bc 4D010000 		.4byte	.LASF16
+ 264 00c0 02       		.uleb128 0x2
+ 265 00c1 08       		.byte	0x8
+ 266 00c2 04       		.byte	0x4
+ 267 00c3 9A040000 		.4byte	.LASF17
+ 268 00c7 02       		.uleb128 0x2
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 7
+
+
+ 269 00c8 01       		.byte	0x1
+ 270 00c9 08       		.byte	0x8
+ 271 00ca 83030000 		.4byte	.LASF18
+ 272 00ce 02       		.uleb128 0x2
+ 273 00cf 08       		.byte	0x8
+ 274 00d0 04       		.byte	0x4
+ 275 00d1 37020000 		.4byte	.LASF19
+ 276 00d5 03       		.uleb128 0x3
+ 277 00d6 CB020000 		.4byte	.LASF20
+ 278 00da 05       		.byte	0x5
+ 279 00db 53       		.byte	0x53
+ 280 00dc 7E000000 		.4byte	0x7e
+ 281 00e0 03       		.uleb128 0x3
+ 282 00e1 BD000000 		.4byte	.LASF21
+ 283 00e5 05       		.byte	0x5
+ 284 00e6 54       		.byte	0x54
+ 285 00e7 85000000 		.4byte	0x85
+ 286 00eb 03       		.uleb128 0x3
+ 287 00ec B3040000 		.4byte	.LASF22
+ 288 00f0 06       		.byte	0x6
+ 289 00f1 4D       		.byte	0x4d
+ 290 00f2 E0000000 		.4byte	0xe0
+ 291 00f6 03       		.uleb128 0x3
+ 292 00f7 A1000000 		.4byte	.LASF23
+ 293 00fb 06       		.byte	0x6
+ 294 00fc 4F       		.byte	0x4f
+ 295 00fd E0000000 		.4byte	0xe0
+ 296 0101 03       		.uleb128 0x3
+ 297 0102 C7000000 		.4byte	.LASF24
+ 298 0106 06       		.byte	0x6
+ 299 0107 78       		.byte	0x78
+ 300 0108 D5000000 		.4byte	0xd5
+ 301 010c 02       		.uleb128 0x2
+ 302 010d 04       		.byte	0x4
+ 303 010e 07       		.byte	0x7
+ 304 010f 79000000 		.4byte	.LASF25
+ 305 0113 06       		.uleb128 0x6
+ 306 0114 A2000000 		.4byte	0xa2
+ 307 0118 03       		.uleb128 0x3
+ 308 0119 1A020000 		.4byte	.LASF26
+ 309 011d 07       		.byte	0x7
+ 310 011e 9C       		.byte	0x9c
+ 311 011f 37000000 		.4byte	0x37
+ 312 0123 07       		.uleb128 0x7
+ 313 0124 01       		.byte	0x1
+ 314 0125 25000000 		.4byte	0x25
+ 315 0129 07       		.byte	0x7
+ 316 012a CF       		.byte	0xcf
+ 317 012b CC010000 		.4byte	0x1cc
+ 318 012f 08       		.uleb128 0x8
+ 319 0130 1F000000 		.4byte	.LASF27
+ 320 0134 00       		.byte	0
+ 321 0135 09       		.uleb128 0x9
+ 322 0136 FA040000 		.4byte	.LASF28
+ 323 013a 7F       		.sleb128 -1
+ 324 013b 09       		.uleb128 0x9
+ 325 013c A7020000 		.4byte	.LASF29
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 8
+
+
+ 326 0140 7E       		.sleb128 -2
+ 327 0141 09       		.uleb128 0x9
+ 328 0142 93000000 		.4byte	.LASF30
+ 329 0146 7D       		.sleb128 -3
+ 330 0147 09       		.uleb128 0x9
+ 331 0148 03050000 		.4byte	.LASF31
+ 332 014c 7C       		.sleb128 -4
+ 333 014d 09       		.uleb128 0x9
+ 334 014e 3E010000 		.4byte	.LASF32
+ 335 0152 7B       		.sleb128 -5
+ 336 0153 09       		.uleb128 0x9
+ 337 0154 53000000 		.4byte	.LASF33
+ 338 0158 7A       		.sleb128 -6
+ 339 0159 09       		.uleb128 0x9
+ 340 015a C0010000 		.4byte	.LASF34
+ 341 015e 79       		.sleb128 -7
+ 342 015f 09       		.uleb128 0x9
+ 343 0160 88030000 		.4byte	.LASF35
+ 344 0164 78       		.sleb128 -8
+ 345 0165 09       		.uleb128 0x9
+ 346 0166 B5020000 		.4byte	.LASF36
+ 347 016a 77       		.sleb128 -9
+ 348 016b 09       		.uleb128 0x9
+ 349 016c D2010000 		.4byte	.LASF37
+ 350 0170 76       		.sleb128 -10
+ 351 0171 09       		.uleb128 0x9
+ 352 0172 43050000 		.4byte	.LASF38
+ 353 0176 75       		.sleb128 -11
+ 354 0177 09       		.uleb128 0x9
+ 355 0178 99020000 		.4byte	.LASF39
+ 356 017c 74       		.sleb128 -12
+ 357 017d 09       		.uleb128 0x9
+ 358 017e A1040000 		.4byte	.LASF40
+ 359 0182 73       		.sleb128 -13
+ 360 0183 09       		.uleb128 0x9
+ 361 0184 24020000 		.4byte	.LASF41
+ 362 0188 72       		.sleb128 -14
+ 363 0189 09       		.uleb128 0x9
+ 364 018a 35000000 		.4byte	.LASF42
+ 365 018e 71       		.sleb128 -15
+ 366 018f 09       		.uleb128 0x9
+ 367 0190 EA010000 		.4byte	.LASF43
+ 368 0194 70       		.sleb128 -16
+ 369 0195 09       		.uleb128 0x9
+ 370 0196 B0030000 		.4byte	.LASF44
+ 371 019a 6F       		.sleb128 -17
+ 372 019b 09       		.uleb128 0x9
+ 373 019c 64000000 		.4byte	.LASF45
+ 374 01a0 6E       		.sleb128 -18
+ 375 01a1 09       		.uleb128 0x9
+ 376 01a2 93010000 		.4byte	.LASF46
+ 377 01a6 6D       		.sleb128 -19
+ 378 01a7 09       		.uleb128 0x9
+ 379 01a8 C4030000 		.4byte	.LASF47
+ 380 01ac 6C       		.sleb128 -20
+ 381 01ad 09       		.uleb128 0x9
+ 382 01ae 08020000 		.4byte	.LASF48
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 9
+
+
+ 383 01b2 6B       		.sleb128 -21
+ 384 01b3 09       		.uleb128 0x9
+ 385 01b4 DB040000 		.4byte	.LASF49
+ 386 01b8 6A       		.sleb128 -22
+ 387 01b9 09       		.uleb128 0x9
+ 388 01ba D6000000 		.4byte	.LASF50
+ 389 01be 69       		.sleb128 -23
+ 390 01bf 09       		.uleb128 0x9
+ 391 01c0 A6010000 		.4byte	.LASF51
+ 392 01c4 68       		.sleb128 -24
+ 393 01c5 09       		.uleb128 0x9
+ 394 01c6 53010000 		.4byte	.LASF52
+ 395 01ca 67       		.sleb128 -25
+ 396 01cb 00       		.byte	0
+ 397 01cc 03       		.uleb128 0x3
+ 398 01cd 33050000 		.4byte	.LASF53
+ 399 01d1 07       		.byte	0x7
+ 400 01d2 EA       		.byte	0xea
+ 401 01d3 23010000 		.4byte	0x123
+ 402 01d7 07       		.uleb128 0x7
+ 403 01d8 01       		.byte	0x1
+ 404 01d9 37000000 		.4byte	0x37
+ 405 01dd 08       		.byte	0x8
+ 406 01de 13       		.byte	0x13
+ 407 01df FC010000 		.4byte	0x1fc
+ 408 01e3 08       		.uleb128 0x8
+ 409 01e4 BB040000 		.4byte	.LASF54
+ 410 01e8 00       		.byte	0
+ 411 01e9 08       		.uleb128 0x8
+ 412 01ea 51020000 		.4byte	.LASF55
+ 413 01ee 01       		.byte	0x1
+ 414 01ef 08       		.uleb128 0x8
+ 415 01f0 82000000 		.4byte	.LASF56
+ 416 01f4 02       		.byte	0x2
+ 417 01f5 08       		.uleb128 0x8
+ 418 01f6 04010000 		.4byte	.LASF57
+ 419 01fa 03       		.byte	0x3
+ 420 01fb 00       		.byte	0
+ 421 01fc 03       		.uleb128 0x3
+ 422 01fd D7030000 		.4byte	.LASF58
+ 423 0201 08       		.byte	0x8
+ 424 0202 18       		.byte	0x18
+ 425 0203 D7010000 		.4byte	0x1d7
+ 426 0207 0A       		.uleb128 0xa
+ 427 0208 A9000000 		.4byte	.LASF59
+ 428 020c 01       		.byte	0x1
+ 429 020d 18       		.byte	0x18
+ 430 020e CC010000 		.4byte	0x1cc
+ 431 0212 00000000 		.4byte	.LFB111
+ 432 0216 0C000000 		.4byte	.LFE111-.LFB111
+ 433 021a 01       		.uleb128 0x1
+ 434 021b 9C       		.byte	0x9c
+ 435 021c 3F020000 		.4byte	0x23f
+ 436 0220 0B       		.uleb128 0xb
+ 437 0221 2B050000 		.4byte	.LASF61
+ 438 0225 01       		.byte	0x1
+ 439 0226 18       		.byte	0x18
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 10
+
+
+ 440 0227 FC010000 		.4byte	0x1fc
+ 441 022b 00000000 		.4byte	.LLST0
+ 442 022f 0C       		.uleb128 0xc
+ 443 0230 08000000 		.4byte	.LVL1
+ 444 0234 04030000 		.4byte	0x304
+ 445 0238 0D       		.uleb128 0xd
+ 446 0239 01       		.uleb128 0x1
+ 447 023a 51       		.byte	0x51
+ 448 023b 01       		.uleb128 0x1
+ 449 023c 30       		.byte	0x30
+ 450 023d 00       		.byte	0
+ 451 023e 00       		.byte	0
+ 452 023f 0E       		.uleb128 0xe
+ 453 0240 2A000000 		.4byte	.LASF75
+ 454 0244 01       		.byte	0x1
+ 455 0245 22       		.byte	0x22
+ 456 0246 CC010000 		.4byte	0x1cc
+ 457 024a 00000000 		.4byte	.LFB112
+ 458 024e 20000000 		.4byte	.LFE112-.LFB112
+ 459 0252 01       		.uleb128 0x1
+ 460 0253 9C       		.byte	0x9c
+ 461 0254 62020000 		.4byte	0x262
+ 462 0258 0F       		.uleb128 0xf
+ 463 0259 12000000 		.4byte	.LVL2
+ 464 025d 0F030000 		.4byte	0x30f
+ 465 0261 00       		.byte	0
+ 466 0262 10       		.uleb128 0x10
+ 467 0263 ED000000 		.4byte	.LASF76
+ 468 0267 01       		.byte	0x1
+ 469 0268 31       		.byte	0x31
+ 470 0269 18010000 		.4byte	0x118
+ 471 026d 00000000 		.4byte	.LFB113
+ 472 0271 18000000 		.4byte	.LFE113-.LFB113
+ 473 0275 01       		.uleb128 0x1
+ 474 0276 9C       		.byte	0x9c
+ 475 0277 0A       		.uleb128 0xa
+ 476 0278 D2040000 		.4byte	.LASF60
+ 477 027c 01       		.byte	0x1
+ 478 027d 46       		.byte	0x46
+ 479 027e CC010000 		.4byte	0x1cc
+ 480 0282 00000000 		.4byte	.LFB114
+ 481 0286 18000000 		.4byte	.LFE114-.LFB114
+ 482 028a 01       		.uleb128 0x1
+ 483 028b 9C       		.byte	0x9c
+ 484 028c A0020000 		.4byte	0x2a0
+ 485 0290 0B       		.uleb128 0xb
+ 486 0291 11000000 		.4byte	.LASF62
+ 487 0295 01       		.byte	0x1
+ 488 0296 46       		.byte	0x46
+ 489 0297 8C000000 		.4byte	0x8c
+ 490 029b 21000000 		.4byte	.LLST1
+ 491 029f 00       		.byte	0
+ 492 02a0 11       		.uleb128 0x11
+ 493 02a1 FB010000 		.4byte	.LASF77
+ 494 02a5 01       		.byte	0x1
+ 495 02a6 11       		.byte	0x11
+ 496 02a7 13010000 		.4byte	0x113
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 11
+
+
+ 497 02ab 05       		.uleb128 0x5
+ 498 02ac 03       		.byte	0x3
+ 499 02ad 00000000 		.4byte	wd_aliveBits
+ 500 02b1 12       		.uleb128 0x12
+ 501 02b2 13050000 		.4byte	.LASF63
+ 502 02b6 09       		.byte	0x9
+ 503 02b7 40       		.byte	0x40
+ 504 02b8 EB000000 		.4byte	0xeb
+ 505 02bc 12       		.uleb128 0x12
+ 506 02bd 7A010000 		.4byte	.LASF64
+ 507 02c1 09       		.byte	0x9
+ 508 02c2 47       		.byte	0x47
+ 509 02c3 F6000000 		.4byte	0xf6
+ 510 02c7 12       		.uleb128 0x12
+ 511 02c8 75040000 		.4byte	.LASF65
+ 512 02cc 09       		.byte	0x9
+ 513 02cd 4A       		.byte	0x4a
+ 514 02ce EB000000 		.4byte	0xeb
+ 515 02d2 12       		.uleb128 0x12
+ 516 02d3 25010000 		.4byte	.LASF66
+ 517 02d7 0A       		.byte	0xa
+ 518 02d8 48       		.byte	0x48
+ 519 02d9 01010000 		.4byte	0x101
+ 520 02dd 12       		.uleb128 0x12
+ 521 02de 10010000 		.4byte	.LASF67
+ 522 02e2 0B       		.byte	0xb
+ 523 02e3 44       		.byte	0x44
+ 524 02e4 EB000000 		.4byte	0xeb
+ 525 02e8 12       		.uleb128 0x12
+ 526 02e9 D4020000 		.4byte	.LASF68
+ 527 02ed 0C       		.byte	0xc
+ 528 02ee 2C       		.byte	0x2c
+ 529 02ef AD000000 		.4byte	0xad
+ 530 02f3 13       		.uleb128 0x13
+ 531 02f4 ED040000 		.4byte	.LASF69
+ 532 02f8 0D       		.byte	0xd
+ 533 02f9 1207     		.2byte	0x712
+ 534 02fb FF020000 		.4byte	0x2ff
+ 535 02ff 06       		.uleb128 0x6
+ 536 0300 97000000 		.4byte	0x97
+ 537 0304 14       		.uleb128 0x14
+ 538 0305 A5030000 		.4byte	.LASF70
+ 539 0309 A5030000 		.4byte	.LASF70
+ 540 030d 0C       		.byte	0xc
+ 541 030e 72       		.byte	0x72
+ 542 030f 14       		.uleb128 0x14
+ 543 0310 38050000 		.4byte	.LASF71
+ 544 0314 38050000 		.4byte	.LASF71
+ 545 0318 0C       		.byte	0xc
+ 546 0319 73       		.byte	0x73
+ 547 031a 00       		.byte	0
+ 548              		.section	.debug_abbrev,"",%progbits
+ 549              	.Ldebug_abbrev0:
+ 550 0000 01       		.uleb128 0x1
+ 551 0001 11       		.uleb128 0x11
+ 552 0002 01       		.byte	0x1
+ 553 0003 25       		.uleb128 0x25
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 12
+
+
+ 554 0004 0E       		.uleb128 0xe
+ 555 0005 13       		.uleb128 0x13
+ 556 0006 0B       		.uleb128 0xb
+ 557 0007 03       		.uleb128 0x3
+ 558 0008 0E       		.uleb128 0xe
+ 559 0009 1B       		.uleb128 0x1b
+ 560 000a 0E       		.uleb128 0xe
+ 561 000b 55       		.uleb128 0x55
+ 562 000c 17       		.uleb128 0x17
+ 563 000d 11       		.uleb128 0x11
+ 564 000e 01       		.uleb128 0x1
+ 565 000f 10       		.uleb128 0x10
+ 566 0010 17       		.uleb128 0x17
+ 567 0011 00       		.byte	0
+ 568 0012 00       		.byte	0
+ 569 0013 02       		.uleb128 0x2
+ 570 0014 24       		.uleb128 0x24
+ 571 0015 00       		.byte	0
+ 572 0016 0B       		.uleb128 0xb
+ 573 0017 0B       		.uleb128 0xb
+ 574 0018 3E       		.uleb128 0x3e
+ 575 0019 0B       		.uleb128 0xb
+ 576 001a 03       		.uleb128 0x3
+ 577 001b 0E       		.uleb128 0xe
+ 578 001c 00       		.byte	0
+ 579 001d 00       		.byte	0
+ 580 001e 03       		.uleb128 0x3
+ 581 001f 16       		.uleb128 0x16
+ 582 0020 00       		.byte	0
+ 583 0021 03       		.uleb128 0x3
+ 584 0022 0E       		.uleb128 0xe
+ 585 0023 3A       		.uleb128 0x3a
+ 586 0024 0B       		.uleb128 0xb
+ 587 0025 3B       		.uleb128 0x3b
+ 588 0026 0B       		.uleb128 0xb
+ 589 0027 49       		.uleb128 0x49
+ 590 0028 13       		.uleb128 0x13
+ 591 0029 00       		.byte	0
+ 592 002a 00       		.byte	0
+ 593 002b 04       		.uleb128 0x4
+ 594 002c 24       		.uleb128 0x24
+ 595 002d 00       		.byte	0
+ 596 002e 0B       		.uleb128 0xb
+ 597 002f 0B       		.uleb128 0xb
+ 598 0030 3E       		.uleb128 0x3e
+ 599 0031 0B       		.uleb128 0xb
+ 600 0032 03       		.uleb128 0x3
+ 601 0033 08       		.uleb128 0x8
+ 602 0034 00       		.byte	0
+ 603 0035 00       		.byte	0
+ 604 0036 05       		.uleb128 0x5
+ 605 0037 16       		.uleb128 0x16
+ 606 0038 00       		.byte	0
+ 607 0039 03       		.uleb128 0x3
+ 608 003a 0E       		.uleb128 0xe
+ 609 003b 3A       		.uleb128 0x3a
+ 610 003c 0B       		.uleb128 0xb
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 13
+
+
+ 611 003d 3B       		.uleb128 0x3b
+ 612 003e 05       		.uleb128 0x5
+ 613 003f 49       		.uleb128 0x49
+ 614 0040 13       		.uleb128 0x13
+ 615 0041 00       		.byte	0
+ 616 0042 00       		.byte	0
+ 617 0043 06       		.uleb128 0x6
+ 618 0044 35       		.uleb128 0x35
+ 619 0045 00       		.byte	0
+ 620 0046 49       		.uleb128 0x49
+ 621 0047 13       		.uleb128 0x13
+ 622 0048 00       		.byte	0
+ 623 0049 00       		.byte	0
+ 624 004a 07       		.uleb128 0x7
+ 625 004b 04       		.uleb128 0x4
+ 626 004c 01       		.byte	0x1
+ 627 004d 0B       		.uleb128 0xb
+ 628 004e 0B       		.uleb128 0xb
+ 629 004f 49       		.uleb128 0x49
+ 630 0050 13       		.uleb128 0x13
+ 631 0051 3A       		.uleb128 0x3a
+ 632 0052 0B       		.uleb128 0xb
+ 633 0053 3B       		.uleb128 0x3b
+ 634 0054 0B       		.uleb128 0xb
+ 635 0055 01       		.uleb128 0x1
+ 636 0056 13       		.uleb128 0x13
+ 637 0057 00       		.byte	0
+ 638 0058 00       		.byte	0
+ 639 0059 08       		.uleb128 0x8
+ 640 005a 28       		.uleb128 0x28
+ 641 005b 00       		.byte	0
+ 642 005c 03       		.uleb128 0x3
+ 643 005d 0E       		.uleb128 0xe
+ 644 005e 1C       		.uleb128 0x1c
+ 645 005f 0B       		.uleb128 0xb
+ 646 0060 00       		.byte	0
+ 647 0061 00       		.byte	0
+ 648 0062 09       		.uleb128 0x9
+ 649 0063 28       		.uleb128 0x28
+ 650 0064 00       		.byte	0
+ 651 0065 03       		.uleb128 0x3
+ 652 0066 0E       		.uleb128 0xe
+ 653 0067 1C       		.uleb128 0x1c
+ 654 0068 0D       		.uleb128 0xd
+ 655 0069 00       		.byte	0
+ 656 006a 00       		.byte	0
+ 657 006b 0A       		.uleb128 0xa
+ 658 006c 2E       		.uleb128 0x2e
+ 659 006d 01       		.byte	0x1
+ 660 006e 3F       		.uleb128 0x3f
+ 661 006f 19       		.uleb128 0x19
+ 662 0070 03       		.uleb128 0x3
+ 663 0071 0E       		.uleb128 0xe
+ 664 0072 3A       		.uleb128 0x3a
+ 665 0073 0B       		.uleb128 0xb
+ 666 0074 3B       		.uleb128 0x3b
+ 667 0075 0B       		.uleb128 0xb
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 14
+
+
+ 668 0076 27       		.uleb128 0x27
+ 669 0077 19       		.uleb128 0x19
+ 670 0078 49       		.uleb128 0x49
+ 671 0079 13       		.uleb128 0x13
+ 672 007a 11       		.uleb128 0x11
+ 673 007b 01       		.uleb128 0x1
+ 674 007c 12       		.uleb128 0x12
+ 675 007d 06       		.uleb128 0x6
+ 676 007e 40       		.uleb128 0x40
+ 677 007f 18       		.uleb128 0x18
+ 678 0080 9742     		.uleb128 0x2117
+ 679 0082 19       		.uleb128 0x19
+ 680 0083 01       		.uleb128 0x1
+ 681 0084 13       		.uleb128 0x13
+ 682 0085 00       		.byte	0
+ 683 0086 00       		.byte	0
+ 684 0087 0B       		.uleb128 0xb
+ 685 0088 05       		.uleb128 0x5
+ 686 0089 00       		.byte	0
+ 687 008a 03       		.uleb128 0x3
+ 688 008b 0E       		.uleb128 0xe
+ 689 008c 3A       		.uleb128 0x3a
+ 690 008d 0B       		.uleb128 0xb
+ 691 008e 3B       		.uleb128 0x3b
+ 692 008f 0B       		.uleb128 0xb
+ 693 0090 49       		.uleb128 0x49
+ 694 0091 13       		.uleb128 0x13
+ 695 0092 02       		.uleb128 0x2
+ 696 0093 17       		.uleb128 0x17
+ 697 0094 00       		.byte	0
+ 698 0095 00       		.byte	0
+ 699 0096 0C       		.uleb128 0xc
+ 700 0097 898201   		.uleb128 0x4109
+ 701 009a 01       		.byte	0x1
+ 702 009b 11       		.uleb128 0x11
+ 703 009c 01       		.uleb128 0x1
+ 704 009d 31       		.uleb128 0x31
+ 705 009e 13       		.uleb128 0x13
+ 706 009f 00       		.byte	0
+ 707 00a0 00       		.byte	0
+ 708 00a1 0D       		.uleb128 0xd
+ 709 00a2 8A8201   		.uleb128 0x410a
+ 710 00a5 00       		.byte	0
+ 711 00a6 02       		.uleb128 0x2
+ 712 00a7 18       		.uleb128 0x18
+ 713 00a8 9142     		.uleb128 0x2111
+ 714 00aa 18       		.uleb128 0x18
+ 715 00ab 00       		.byte	0
+ 716 00ac 00       		.byte	0
+ 717 00ad 0E       		.uleb128 0xe
+ 718 00ae 2E       		.uleb128 0x2e
+ 719 00af 01       		.byte	0x1
+ 720 00b0 3F       		.uleb128 0x3f
+ 721 00b1 19       		.uleb128 0x19
+ 722 00b2 03       		.uleb128 0x3
+ 723 00b3 0E       		.uleb128 0xe
+ 724 00b4 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 15
+
+
+ 725 00b5 0B       		.uleb128 0xb
+ 726 00b6 3B       		.uleb128 0x3b
+ 727 00b7 0B       		.uleb128 0xb
+ 728 00b8 49       		.uleb128 0x49
+ 729 00b9 13       		.uleb128 0x13
+ 730 00ba 11       		.uleb128 0x11
+ 731 00bb 01       		.uleb128 0x1
+ 732 00bc 12       		.uleb128 0x12
+ 733 00bd 06       		.uleb128 0x6
+ 734 00be 40       		.uleb128 0x40
+ 735 00bf 18       		.uleb128 0x18
+ 736 00c0 9742     		.uleb128 0x2117
+ 737 00c2 19       		.uleb128 0x19
+ 738 00c3 01       		.uleb128 0x1
+ 739 00c4 13       		.uleb128 0x13
+ 740 00c5 00       		.byte	0
+ 741 00c6 00       		.byte	0
+ 742 00c7 0F       		.uleb128 0xf
+ 743 00c8 898201   		.uleb128 0x4109
+ 744 00cb 00       		.byte	0
+ 745 00cc 11       		.uleb128 0x11
+ 746 00cd 01       		.uleb128 0x1
+ 747 00ce 31       		.uleb128 0x31
+ 748 00cf 13       		.uleb128 0x13
+ 749 00d0 00       		.byte	0
+ 750 00d1 00       		.byte	0
+ 751 00d2 10       		.uleb128 0x10
+ 752 00d3 2E       		.uleb128 0x2e
+ 753 00d4 00       		.byte	0
+ 754 00d5 3F       		.uleb128 0x3f
+ 755 00d6 19       		.uleb128 0x19
+ 756 00d7 03       		.uleb128 0x3
+ 757 00d8 0E       		.uleb128 0xe
+ 758 00d9 3A       		.uleb128 0x3a
+ 759 00da 0B       		.uleb128 0xb
+ 760 00db 3B       		.uleb128 0x3b
+ 761 00dc 0B       		.uleb128 0xb
+ 762 00dd 49       		.uleb128 0x49
+ 763 00de 13       		.uleb128 0x13
+ 764 00df 11       		.uleb128 0x11
+ 765 00e0 01       		.uleb128 0x1
+ 766 00e1 12       		.uleb128 0x12
+ 767 00e2 06       		.uleb128 0x6
+ 768 00e3 40       		.uleb128 0x40
+ 769 00e4 18       		.uleb128 0x18
+ 770 00e5 9742     		.uleb128 0x2117
+ 771 00e7 19       		.uleb128 0x19
+ 772 00e8 00       		.byte	0
+ 773 00e9 00       		.byte	0
+ 774 00ea 11       		.uleb128 0x11
+ 775 00eb 34       		.uleb128 0x34
+ 776 00ec 00       		.byte	0
+ 777 00ed 03       		.uleb128 0x3
+ 778 00ee 0E       		.uleb128 0xe
+ 779 00ef 3A       		.uleb128 0x3a
+ 780 00f0 0B       		.uleb128 0xb
+ 781 00f1 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 16
+
+
+ 782 00f2 0B       		.uleb128 0xb
+ 783 00f3 49       		.uleb128 0x49
+ 784 00f4 13       		.uleb128 0x13
+ 785 00f5 02       		.uleb128 0x2
+ 786 00f6 18       		.uleb128 0x18
+ 787 00f7 00       		.byte	0
+ 788 00f8 00       		.byte	0
+ 789 00f9 12       		.uleb128 0x12
+ 790 00fa 34       		.uleb128 0x34
+ 791 00fb 00       		.byte	0
+ 792 00fc 03       		.uleb128 0x3
+ 793 00fd 0E       		.uleb128 0xe
+ 794 00fe 3A       		.uleb128 0x3a
+ 795 00ff 0B       		.uleb128 0xb
+ 796 0100 3B       		.uleb128 0x3b
+ 797 0101 0B       		.uleb128 0xb
+ 798 0102 49       		.uleb128 0x49
+ 799 0103 13       		.uleb128 0x13
+ 800 0104 3F       		.uleb128 0x3f
+ 801 0105 19       		.uleb128 0x19
+ 802 0106 3C       		.uleb128 0x3c
+ 803 0107 19       		.uleb128 0x19
+ 804 0108 00       		.byte	0
+ 805 0109 00       		.byte	0
+ 806 010a 13       		.uleb128 0x13
+ 807 010b 34       		.uleb128 0x34
+ 808 010c 00       		.byte	0
+ 809 010d 03       		.uleb128 0x3
+ 810 010e 0E       		.uleb128 0xe
+ 811 010f 3A       		.uleb128 0x3a
+ 812 0110 0B       		.uleb128 0xb
+ 813 0111 3B       		.uleb128 0x3b
+ 814 0112 05       		.uleb128 0x5
+ 815 0113 49       		.uleb128 0x49
+ 816 0114 13       		.uleb128 0x13
+ 817 0115 3F       		.uleb128 0x3f
+ 818 0116 19       		.uleb128 0x19
+ 819 0117 3C       		.uleb128 0x3c
+ 820 0118 19       		.uleb128 0x19
+ 821 0119 00       		.byte	0
+ 822 011a 00       		.byte	0
+ 823 011b 14       		.uleb128 0x14
+ 824 011c 2E       		.uleb128 0x2e
+ 825 011d 00       		.byte	0
+ 826 011e 3F       		.uleb128 0x3f
+ 827 011f 19       		.uleb128 0x19
+ 828 0120 3C       		.uleb128 0x3c
+ 829 0121 19       		.uleb128 0x19
+ 830 0122 6E       		.uleb128 0x6e
+ 831 0123 0E       		.uleb128 0xe
+ 832 0124 03       		.uleb128 0x3
+ 833 0125 0E       		.uleb128 0xe
+ 834 0126 3A       		.uleb128 0x3a
+ 835 0127 0B       		.uleb128 0xb
+ 836 0128 3B       		.uleb128 0x3b
+ 837 0129 0B       		.uleb128 0xb
+ 838 012a 00       		.byte	0
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 17
+
+
+ 839 012b 00       		.byte	0
+ 840 012c 00       		.byte	0
+ 841              		.section	.debug_loc,"",%progbits
+ 842              	.Ldebug_loc0:
+ 843              	.LLST0:
+ 844 0000 00000000 		.4byte	.LVL0
+ 845 0004 07000000 		.4byte	.LVL1-1
+ 846 0008 0100     		.2byte	0x1
+ 847 000a 50       		.byte	0x50
+ 848 000b 07000000 		.4byte	.LVL1-1
+ 849 000f 0C000000 		.4byte	.LFE111
+ 850 0013 0400     		.2byte	0x4
+ 851 0015 F3       		.byte	0xf3
+ 852 0016 01       		.uleb128 0x1
+ 853 0017 50       		.byte	0x50
+ 854 0018 9F       		.byte	0x9f
+ 855 0019 00000000 		.4byte	0
+ 856 001d 00000000 		.4byte	0
+ 857              	.LLST1:
+ 858 0021 00000000 		.4byte	.LVL3
+ 859 0025 06000000 		.4byte	.LVL4
+ 860 0029 0100     		.2byte	0x1
+ 861 002b 50       		.byte	0x50
+ 862 002c 06000000 		.4byte	.LVL4
+ 863 0030 18000000 		.4byte	.LFE114
+ 864 0034 0400     		.2byte	0x4
+ 865 0036 F3       		.byte	0xf3
+ 866 0037 01       		.uleb128 0x1
+ 867 0038 50       		.byte	0x50
+ 868 0039 9F       		.byte	0x9f
+ 869 003a 00000000 		.4byte	0
+ 870 003e 00000000 		.4byte	0
+ 871              		.section	.debug_aranges,"",%progbits
+ 872 0000 34000000 		.4byte	0x34
+ 873 0004 0200     		.2byte	0x2
+ 874 0006 00000000 		.4byte	.Ldebug_info0
+ 875 000a 04       		.byte	0x4
+ 876 000b 00       		.byte	0
+ 877 000c 0000     		.2byte	0
+ 878 000e 0000     		.2byte	0
+ 879 0010 00000000 		.4byte	.LFB111
+ 880 0014 0C000000 		.4byte	.LFE111-.LFB111
+ 881 0018 00000000 		.4byte	.LFB112
+ 882 001c 20000000 		.4byte	.LFE112-.LFB112
+ 883 0020 00000000 		.4byte	.LFB113
+ 884 0024 18000000 		.4byte	.LFE113-.LFB113
+ 885 0028 00000000 		.4byte	.LFB114
+ 886 002c 18000000 		.4byte	.LFE114-.LFB114
+ 887 0030 00000000 		.4byte	0
+ 888 0034 00000000 		.4byte	0
+ 889              		.section	.debug_ranges,"",%progbits
+ 890              	.Ldebug_ranges0:
+ 891 0000 00000000 		.4byte	.LFB111
+ 892 0004 0C000000 		.4byte	.LFE111
+ 893 0008 00000000 		.4byte	.LFB112
+ 894 000c 20000000 		.4byte	.LFE112
+ 895 0010 00000000 		.4byte	.LFB113
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 18
+
+
+ 896 0014 18000000 		.4byte	.LFE113
+ 897 0018 00000000 		.4byte	.LFB114
+ 898 001c 18000000 		.4byte	.LFE114
+ 899 0020 00000000 		.4byte	0
+ 900 0024 00000000 		.4byte	0
+ 901              		.section	.debug_line,"",%progbits
+ 902              	.Ldebug_line0:
+ 903 0000 8A020000 		.section	.debug_str,"MS",%progbits,1
+ 903      02003C02 
+ 903      00000201 
+ 903      FB0E0D00 
+ 903      01010101 
+ 904              	.LASF73:
+ 905 0000 77617463 		.ascii	"watchdog_timer.c\000"
+ 905      68646F67 
+ 905      5F74696D 
+ 905      65722E63 
+ 905      00
+ 906              	.LASF62:
+ 907 0011 6D794269 		.ascii	"myBitPosition\000"
+ 907      74506F73 
+ 907      6974696F 
+ 907      6E00
+ 908              	.LASF27:
+ 909 001f 52435F53 		.ascii	"RC_SUCCESS\000"
+ 909      55434345 
+ 909      535300
+ 910              	.LASF75:
+ 911 002a 57445F54 		.ascii	"WD_Trigger\000"
+ 911      72696767 
+ 911      657200
+ 912              	.LASF42:
+ 913 0035 52435F45 		.ascii	"RC_ERROR_WRITE_ONLY\000"
+ 913      52524F52 
+ 913      5F575249 
+ 913      54455F4F 
+ 913      4E4C5900 
+ 914              	.LASF2:
+ 915 0049 73686F72 		.ascii	"short int\000"
+ 915      7420696E 
+ 915      7400
+ 916              	.LASF33:
+ 917 0053 52435F45 		.ascii	"RC_ERROR_OVERRUN\000"
+ 917      52524F52 
+ 917      5F4F5645 
+ 917      5252554E 
+ 917      00
+ 918              	.LASF45:
+ 919 0064 52435F45 		.ascii	"RC_ERROR_WRITE_FAILS\000"
+ 919      52524F52 
+ 919      5F575249 
+ 919      54455F46 
+ 919      41494C53 
+ 920              	.LASF25:
+ 921 0079 73697A65 		.ascii	"sizetype\000"
+ 921      74797065 
+ 921      00
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 19
+
+
+ 922              	.LASF56:
+ 923 0082 7469636B 		.ascii	"ticks_256_384_ms\000"
+ 923      735F3235 
+ 923      365F3338 
+ 923      345F6D73 
+ 923      00
+ 924              	.LASF30:
+ 925 0093 52435F45 		.ascii	"RC_ERROR_ZERO\000"
+ 925      52524F52 
+ 925      5F5A4552 
+ 925      4F00
+ 926              	.LASF23:
+ 927 00a1 45455F46 		.ascii	"EE_FREG\000"
+ 927      52454700 
+ 928              	.LASF59:
+ 929 00a9 57445F53 		.ascii	"WD_Start\000"
+ 929      74617274 
+ 929      00
+ 930              	.LASF7:
+ 931 00b2 5F5F7569 		.ascii	"__uint32_t\000"
+ 931      6E743332 
+ 931      5F7400
+ 932              	.LASF21:
+ 933 00bd 45455F55 		.ascii	"EE_UINT32\000"
+ 933      494E5433 
+ 933      3200
+ 934              	.LASF24:
+ 935 00c7 45455F54 		.ascii	"EE_TID\000"
+ 935      494400
+ 936              	.LASF12:
+ 937 00ce 75696E74 		.ascii	"uint8_t\000"
+ 937      385F7400 
+ 938              	.LASF50:
+ 939 00d6 52435F45 		.ascii	"RC_ERROR_INVALID_STATE\000"
+ 939      52524F52 
+ 939      5F494E56 
+ 939      414C4944 
+ 939      5F535441 
+ 940              	.LASF76:
+ 941 00ed 57445F43 		.ascii	"WD_CheckResetBit\000"
+ 941      6865636B 
+ 941      52657365 
+ 941      74426974 
+ 941      00
+ 942              	.LASF15:
+ 943 00fe 75696E74 		.ascii	"uint8\000"
+ 943      3800
+ 944              	.LASF57:
+ 945 0104 7469636B 		.ascii	"ticks_2_3_s\000"
+ 945      735F325F 
+ 945      335F7300 
+ 946              	.LASF67:
+ 947 0110 45455F49 		.ascii	"EE_IRQ_nesting_level\000"
+ 947      52515F6E 
+ 947      65737469 
+ 947      6E675F6C 
+ 947      6576656C 
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 20
+
+
+ 948              	.LASF66:
+ 949 0125 45455F73 		.ascii	"EE_std_endcycle_next_tid\000"
+ 949      74645F65 
+ 949      6E646379 
+ 949      636C655F 
+ 949      6E657874 
+ 950              	.LASF32:
+ 951 013e 52435F45 		.ascii	"RC_ERROR_RANGE\000"
+ 951      52524F52 
+ 951      5F52414E 
+ 951      474500
+ 952              	.LASF16:
+ 953 014d 666C6F61 		.ascii	"float\000"
+ 953      7400
+ 954              	.LASF52:
+ 955 0153 52435F45 		.ascii	"RC_ERROR_NOT_IMPLEMENTED\000"
+ 955      52524F52 
+ 955      5F4E4F54 
+ 955      5F494D50 
+ 955      4C454D45 
+ 956              	.LASF9:
+ 957 016c 6C6F6E67 		.ascii	"long long int\000"
+ 957      206C6F6E 
+ 957      6720696E 
+ 957      7400
+ 958              	.LASF64:
+ 959 017a 45455F6F 		.ascii	"EE_oo_IRQ_suspend_status\000"
+ 959      6F5F4952 
+ 959      515F7375 
+ 959      7370656E 
+ 959      645F7374 
+ 960              	.LASF46:
+ 961 0193 52435F45 		.ascii	"RC_ERROR_NOT_MATCH\000"
+ 961      52524F52 
+ 961      5F4E4F54 
+ 961      5F4D4154 
+ 961      434800
+ 962              	.LASF51:
+ 963 01a6 52435F45 		.ascii	"RC_ERROR_UNKNOWN\000"
+ 963      52524F52 
+ 963      5F554E4B 
+ 963      4E4F574E 
+ 963      00
+ 964              	.LASF6:
+ 965 01b7 6C6F6E67 		.ascii	"long int\000"
+ 965      20696E74 
+ 965      00
+ 966              	.LASF34:
+ 967 01c0 52435F45 		.ascii	"RC_ERROR_UNDERRUN\000"
+ 967      52524F52 
+ 967      5F554E44 
+ 967      45525255 
+ 967      4E00
+ 968              	.LASF37:
+ 969 01d2 52435F45 		.ascii	"RC_ERROR_BUSY\000"
+ 969      52524F52 
+ 969      5F425553 
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 21
+
+
+ 969      5900
+ 970              	.LASF4:
+ 971 01e0 5F5F7569 		.ascii	"__uint8_t\000"
+ 971      6E74385F 
+ 971      7400
+ 972              	.LASF43:
+ 973 01ea 52435F45 		.ascii	"RC_ERROR_INVALID\000"
+ 973      52524F52 
+ 973      5F494E56 
+ 973      414C4944 
+ 973      00
+ 974              	.LASF77:
+ 975 01fb 77645F61 		.ascii	"wd_aliveBits\000"
+ 975      6C697665 
+ 975      42697473 
+ 975      00
+ 976              	.LASF48:
+ 977 0208 52435F45 		.ascii	"RC_ERROR_BAD_DATA\000"
+ 977      52524F52 
+ 977      5F424144 
+ 977      5F444154 
+ 977      4100
+ 978              	.LASF26:
+ 979 021a 626F6F6C 		.ascii	"boolean_t\000"
+ 979      65616E5F 
+ 979      7400
+ 980              	.LASF41:
+ 981 0224 52435F45 		.ascii	"RC_ERROR_READ_ONLY\000"
+ 981      52524F52 
+ 981      5F524541 
+ 981      445F4F4E 
+ 981      4C5900
+ 982              	.LASF19:
+ 983 0237 6C6F6E67 		.ascii	"long double\000"
+ 983      20646F75 
+ 983      626C6500 
+ 984              	.LASF1:
+ 985 0243 756E7369 		.ascii	"unsigned char\000"
+ 985      676E6564 
+ 985      20636861 
+ 985      7200
+ 986              	.LASF55:
+ 987 0251 7469636B 		.ascii	"ticks_32_48_ms\000"
+ 987      735F3332 
+ 987      5F34385F 
+ 987      6D7300
+ 988              	.LASF0:
+ 989 0260 7369676E 		.ascii	"signed char\000"
+ 989      65642063 
+ 989      68617200 
+ 990              	.LASF10:
+ 991 026c 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 991      206C6F6E 
+ 991      6720756E 
+ 991      7369676E 
+ 991      65642069 
+ 992              	.LASF14:
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 22
+
+
+ 993 0283 75696E74 		.ascii	"uint32_t\000"
+ 993      33325F74 
+ 993      00
+ 994              	.LASF11:
+ 995 028c 756E7369 		.ascii	"unsigned int\000"
+ 995      676E6564 
+ 995      20696E74 
+ 995      00
+ 996              	.LASF39:
+ 997 0299 52435F45 		.ascii	"RC_ERROR_OPEN\000"
+ 997      52524F52 
+ 997      5F4F5045 
+ 997      4E00
+ 998              	.LASF29:
+ 999 02a7 52435F45 		.ascii	"RC_ERROR_NULL\000"
+ 999      52524F52 
+ 999      5F4E554C 
+ 999      4C00
+ 1000              	.LASF36:
+ 1001 02b5 52435F45 		.ascii	"RC_ERROR_BUFFER_EMTPY\000"
+ 1001      52524F52 
+ 1001      5F425546 
+ 1001      4645525F 
+ 1001      454D5450 
+ 1002              	.LASF20:
+ 1003 02cb 45455F49 		.ascii	"EE_INT32\000"
+ 1003      4E543332 
+ 1003      00
+ 1004              	.LASF68:
+ 1005 02d4 43795265 		.ascii	"CyResetStatus\000"
+ 1005      73657453 
+ 1005      74617475 
+ 1005      7300
+ 1006              	.LASF3:
+ 1007 02e2 73686F72 		.ascii	"short unsigned int\000"
+ 1007      7420756E 
+ 1007      7369676E 
+ 1007      65642069 
+ 1007      6E7400
+ 1008              	.LASF72:
+ 1009 02f5 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1009      43313120 
+ 1009      352E342E 
+ 1009      31203230 
+ 1009      31363036 
+ 1010 0328 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 1010      20726576 
+ 1010      6973696F 
+ 1010      6E203233 
+ 1010      37373135 
+ 1011 035b 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1011      66756E63 
+ 1011      74696F6E 
+ 1011      2D736563 
+ 1011      74696F6E 
+ 1012              	.LASF18:
+ 1013 0383 63686172 		.ascii	"char\000"
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 23
+
+
+ 1013      00
+ 1014              	.LASF35:
+ 1015 0388 52435F45 		.ascii	"RC_ERROR_BUFFER_FULL\000"
+ 1015      52524F52 
+ 1015      5F425546 
+ 1015      4645525F 
+ 1015      46554C4C 
+ 1016              	.LASF13:
+ 1017 039d 696E7433 		.ascii	"int32_t\000"
+ 1017      325F7400 
+ 1018              	.LASF70:
+ 1019 03a5 43795764 		.ascii	"CyWdtStart\000"
+ 1019      74537461 
+ 1019      727400
+ 1020              	.LASF44:
+ 1021 03b0 52435F45 		.ascii	"RC_ERROR_READ_FAILS\000"
+ 1021      52524F52 
+ 1021      5F524541 
+ 1021      445F4641 
+ 1021      494C5300 
+ 1022              	.LASF47:
+ 1023 03c4 52435F45 		.ascii	"RC_ERROR_BAD_PARAM\000"
+ 1023      52524F52 
+ 1023      5F424144 
+ 1023      5F504152 
+ 1023      414D00
+ 1024              	.LASF58:
+ 1025 03d7 5744545F 		.ascii	"WDT_TimeOut_t\000"
+ 1025      54696D65 
+ 1025      4F75745F 
+ 1025      7400
+ 1026              	.LASF74:
+ 1027 03e5 433A5C55 		.ascii	"C:\\Users\\Vikram Vadhirajan\\OneDrive - LearnMSO\\"
+ 1027      73657273 
+ 1027      5C56696B 
+ 1027      72616D20 
+ 1027      56616468 
+ 1028 0414 5072616A 		.ascii	"Praju_Docs\\Semester_2\\EAA\\Lab\\PSOC_Creator\\Lab"
+ 1028      755F446F 
+ 1028      63735C53 
+ 1028      656D6573 
+ 1028      7465725F 
+ 1029 0442 5C4C6162 		.ascii	"\\Lab1\\Lab1_Assignment_GasPedal\\Lab1_GasPedal.cyd"
+ 1029      315C4C61 
+ 1029      62315F41 
+ 1029      73736967 
+ 1029      6E6D656E 
+ 1030 0472 736E00   		.ascii	"sn\000"
+ 1031              	.LASF65:
+ 1032 0475 45455F41 		.ascii	"EE_ApplicationMode\000"
+ 1032      70706C69 
+ 1032      63617469 
+ 1032      6F6E4D6F 
+ 1032      646500
+ 1033              	.LASF8:
+ 1034 0488 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1034      20756E73 
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 24
+
+
+ 1034      69676E65 
+ 1034      6420696E 
+ 1034      7400
+ 1035              	.LASF17:
+ 1036 049a 646F7562 		.ascii	"double\000"
+ 1036      6C6500
+ 1037              	.LASF40:
+ 1038 04a1 52435F45 		.ascii	"RC_ERROR_CHECKSUM\000"
+ 1038      52524F52 
+ 1038      5F434845 
+ 1038      434B5355 
+ 1038      4D00
+ 1039              	.LASF22:
+ 1040 04b3 45455F55 		.ascii	"EE_UREG\000"
+ 1040      52454700 
+ 1041              	.LASF54:
+ 1042 04bb 7469636B 		.ascii	"ticks_4_6_ms\000"
+ 1042      735F345F 
+ 1042      365F6D73 
+ 1042      00
+ 1043              	.LASF5:
+ 1044 04c8 5F5F696E 		.ascii	"__int32_t\000"
+ 1044      7433325F 
+ 1044      7400
+ 1045              	.LASF60:
+ 1046 04d2 57445F41 		.ascii	"WD_Alive\000"
+ 1046      6C697665 
+ 1046      00
+ 1047              	.LASF49:
+ 1048 04db 52435F45 		.ascii	"RC_ERROR_CANCELED\000"
+ 1048      52524F52 
+ 1048      5F43414E 
+ 1048      43454C45 
+ 1048      4400
+ 1049              	.LASF69:
+ 1050 04ed 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1050      52784275 
+ 1050      66666572 
+ 1050      00
+ 1051              	.LASF28:
+ 1052 04fa 52435F45 		.ascii	"RC_ERROR\000"
+ 1052      52524F52 
+ 1052      00
+ 1053              	.LASF31:
+ 1054 0503 52435F45 		.ascii	"RC_ERROR_MEMORY\000"
+ 1054      52524F52 
+ 1054      5F4D454D 
+ 1054      4F525900 
+ 1055              	.LASF63:
+ 1056 0513 45455F6F 		.ascii	"EE_oo_IRQ_disable_count\000"
+ 1056      6F5F4952 
+ 1056      515F6469 
+ 1056      7361626C 
+ 1056      655F636F 
+ 1057              	.LASF61:
+ 1058 052b 74696D65 		.ascii	"timeout\000"
+ 1058      6F757400 
+ARM GAS  C:\Users\VIKRAM~1\AppData\Local\Temp\ccBtXCz7.s 			page 25
+
+
+ 1059              	.LASF53:
+ 1060 0533 52435F74 		.ascii	"RC_t\000"
+ 1060      00
+ 1061              	.LASF71:
+ 1062 0538 43795764 		.ascii	"CyWdtClear\000"
+ 1062      74436C65 
+ 1062      617200
+ 1063              	.LASF38:
+ 1064 0543 52435F45 		.ascii	"RC_ERROR_TIME_OUT\000"
+ 1064      52524F52 
+ 1064      5F54494D 
+ 1064      455F4F55 
+ 1064      5400
+ 1065              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
